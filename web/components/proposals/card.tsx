@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Bitcoin, Hash } from "lucide-react";
 
 export default function ProposalCard({ proposal, onClick }) {
   return (
@@ -20,9 +20,17 @@ export default function ProposalCard({ proposal, onClick }) {
             {proposal.passed ? "Passed" : "Failed"}
           </Badge>
         </div>
-        <div className="flex items-center text-sm text-muted-foreground">
+        <div className="flex items-center text-sm text-muted-foreground mb-2">
           <CalendarIcon className="mr-2 h-4 w-4" />
           Proposed: {proposal.proposalDate}
+        </div>
+        <div className="flex items-center text-sm text-muted-foreground mb-2">
+          <Bitcoin className="mr-2 h-4 w-4" />
+          Amount: {proposal.amount} ETH
+        </div>
+        <div className="flex items-center text-sm text-muted-foreground">
+          <Hash className="mr-2 h-4 w-4" />
+          Destination Address: <code>{proposal.destinationAddress} </code>
         </div>
       </CardContent>
     </Card>
