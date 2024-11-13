@@ -1,66 +1,29 @@
-## Foundry
+# Tracery
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## References
 
-Foundry consists of:
+### Foundry
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- <https://github.com/foundry-rs/foundry>
 
-## Documentation
+### Concepts
 
-https://book.getfoundry.sh/
+- [ERC20](<https://www.investopedia.com/news/what-erc20-and-what-does-it-mean-ethereum>)
 
-## Usage
+### Courses
 
-### Build
+- <https://github.com/Cyfrin/foundry-full-course-cu>
 
-```shell
-$ forge build
-```
+### Vitalik
 
-### Test
+- <https://vitalik.eth.limo/general/2021/08/16/voting3.html>
+- <https://vitalik.eth.limo/general/2018/03/28/plutocracy.html>
 
-```shell
-$ forge test
-```
+### OpenZepplin
 
-### Format
+- [Governance](https://docs.openzeppelin.com/contracts/4.x/api/governance)
+- <https://docs.openzeppelin.com/contracts/4.x/erc4626>
 
-```shell
-$ forge fmt
-```
+## Privy
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- <https://www.privy.io/>
