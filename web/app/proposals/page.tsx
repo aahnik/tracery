@@ -1,4 +1,4 @@
-import { ProposalsPage } from "@/components/app-page";
+import { ProposalsPage } from "@/components/proposals-page";
 
 export default function Page() {
   return (

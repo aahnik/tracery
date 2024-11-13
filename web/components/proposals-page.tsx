@@ -50,6 +50,8 @@ By increasing our community fund, we can foster more innovation, engage more mem
     passingDate: "2023-05-15",
     executionDate: "2023-05-20",
     lastDateToVote: "2023-05-14",
+    amount: 1000,
+    destinationAddress: "0x4a3f309f3a4fbbf3e0b6a4e7e7f7f5e8f3e0b6a4",
   },
   {
     id: 2,
@@ -64,6 +66,8 @@ By increasing our community fund, we can foster more innovation, engage more mem
     passingDate: "2023-05-25",
     executionDate: null,
     lastDateToVote: "2023-05-24",
+    amount: 1000,
+    destinationAddress: "0x4a3f309f3a4fbbf3e0b6a4e7e7f7f5e8f3e0b6a4",
   },
   {
     id: 3,
@@ -79,6 +83,8 @@ By increasing our community fund, we can foster more innovation, engage more mem
     passingDate: null,
     executionDate: null,
     lastDateToVote: "2023-06-03",
+    amount: 1000,
+    destinationAddress: "0x4a3f309f3a4fbbf3e0b6a4e7e7f7f5e8f3e0b6a4",
   },
 ];
 
@@ -92,7 +98,7 @@ export function ProposalsPage() {
   };
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Tracery Proposals</h1>
+      <h1 className="text-4xl font-bold mb-8">Tracery Spend Proposals</h1>
       <CreateProposalModal />
       <div>
         {proposals.map((proposal) => (
