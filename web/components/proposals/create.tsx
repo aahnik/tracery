@@ -32,7 +32,7 @@ export default function CreateProposalModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="mb-8">Create New Proposal</Button>
+        <Button className="mb-8 text-md">Create New Proposal</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[825px] sm:h-[600px]">
         <DialogHeader>
