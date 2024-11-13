@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin-contracts-5.1.0/token/ERC20/ERC20.sol";
 import "forge-std/Test.sol";
-import "./Tracery.sol";
+import "../src/Tracery.sol";
 
 contract GovernanceToken is ERC20 {
     constructor() ERC20("Governance Token", "GOV") {
@@ -12,7 +12,7 @@ contract GovernanceToken is ERC20 {
 }
 
 contract DAOTreasuryTest is Test {
-    DAOTreasury public treasury;
+    Tracery public treasury;
     GovernanceToken public governanceToken;
     address public alice = address(0x1);
     address public bob = address(0x2);
@@ -20,7 +20,7 @@ contract DAOTreasuryTest is Test {
 
     function setUp() public {
         governanceToken = new GovernanceToken();
-        treasury = new DAOTreasury(address(governanceToken));
+        treasury = new Tracery(address(governanceToken));
         treasury.addMember(alice);
         treasury.addMember(bob);
         governanceToken.transfer(bob, 500000);

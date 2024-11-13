@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin-contracts-5.1.0/token/ERC20/IERC20.sol";
+import "@openzeppelin-contracts-5.1.0/access/Ownable.sol";
 
-contract Tracery is Ownable {
+contract Tracery is Ownable(msg.sender) {
     IERC20 public governanceToken;
     uint256 public constant VOTING_PERIOD = 7 days;
     uint256 public constant WAIT_BEFORE_EXEC = 2 days;
