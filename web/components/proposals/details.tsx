@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  Bitcoin,
   CalendarIcon,
   CheckCircleIcon,
   ClockIcon,
@@ -12,6 +13,7 @@ import {
   ThumbsUpIcon,
   XCircleIcon,
   ZapIcon,
+  Hash,
 } from "lucide-react";
 import {
   DialogContent,
@@ -29,9 +31,10 @@ export default function ProposalDetailsModal({ proposal }) {
     return null;
   }
 
-  const currentDate = new Date();
-  const lastDateToVote = new Date(proposal.lastDateToVote);
-  const canVote = currentDate <= lastDateToVote;
+  // const currentDate = new Date();
+  // const lastDateToVote = new Date(proposal.lastDateToVote);
+  // const canVote = currentDate <= lastDateToVote;
+  const canVote = true;
 
   const handleVote = (voteType) => {
     setVote(voteType);
@@ -39,7 +42,7 @@ export default function ProposalDetailsModal({ proposal }) {
   };
 
   return (
-    <DialogContent className="max-w-4xl h-[80vh]">
+    <DialogContent className="max-w-6xl h-[80vh]">
       <DialogHeader>
         <DialogTitle>{proposal.title}</DialogTitle>
       </DialogHeader>
@@ -98,6 +101,22 @@ export default function ProposalDetailsModal({ proposal }) {
                   </span>
                 </div>
               )}
+              <Separator />
+              {/* <Separator /> */}
+              <div className="flex items-center">
+                <Bitcoin className="w-5 h-5 text-orange-500 mr-2" />
+                <span className="text-sm">Amount: {proposal.amount} ETH</span>
+              </div>
+              <div className="flex items-center">
+                <Hash className="w-5 h-5 text-gray-500 mr-2" />
+                <span className="text-sm">
+                  Destination Address:{" "}
+                  <code>
+                    {proposal.destinationAddress.slice(0, 5)}...
+                    {proposal.destinationAddress.slice(-5)}
+                  </code>
+                </span>
+              </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <span className="font-semibold">Status</span>
