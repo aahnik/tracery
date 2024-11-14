@@ -61,7 +61,6 @@ contract Tracery is Ownable(msg.sender) {
         address _destination,
         string memory _title
     ) external onlyMember {
-        require(members[msg.sender], "Not a DAO member");
         uint256 proposalId = proposals.length;
         Proposal storage newProposal = proposals.push();
         newProposal.proposer = msg.sender;
@@ -76,7 +75,6 @@ contract Tracery is Ownable(msg.sender) {
     }
 
     function vote(uint256 _proposalId, bool _vote) external onlyMember {
-        require(members[msg.sender], "Not a DAO member");
         Proposal storage proposal = proposals[_proposalId];
         require(
             block.timestamp <= proposal.votingDeadline,
