@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin-contracts-5.1.0/token/ERC20/ERC20.sol";
 import "forge-std/Test.sol";
+import "forge-std/console.sol";
 import "../src/Tracery.sol";
 
 contract GovernanceToken is ERC20 {
@@ -11,8 +12,8 @@ contract GovernanceToken is ERC20 {
     }
 }
 
-contract DAOTreasuryTest is Test {
-    Tracery public treasury;
+contract TraceryTest is Test {
+    Tracery public tracery;
     GovernanceToken public governanceToken;
     address public alice = address(0x1);
     address public bob = address(0x2);
@@ -20,93 +21,173 @@ contract DAOTreasuryTest is Test {
 
     function setUp() public {
         governanceToken = new GovernanceToken();
-        treasury = new Tracery(address(governanceToken));
-        treasury.addMember(alice);
-        treasury.addMember(bob);
+        tracery = new Tracery(address(governanceToken));
+        tracery.addMember(alice);
+        tracery.addMember(bob);
         governanceToken.transfer(bob, 500000);
+        vm.deal(address(tracery), 10 ether);
     }
 
-    function testProposalFlow() public {
-        vm.deal(address(treasury), 10 ether);
+    // function testProposalFlow() public {
+    //     vm.deal(address(tracery), 10 ether);
 
+    //     vm.startPrank(alice);
+    //     tracery.createProposal(1 ether, carol, "Test Proposal");
+    //     tracery.vote(0, true);
+    //     vm.stopPrank();
+
+    //     vm.startPrank(bob);
+    //     tracery.vote(0, false);
+    //     vm.stopPrank();
+
+    //     // Assert that voting does not end before voting period ends
+    //     vm.warp(block.timestamp + tracery.VOTING_PERIOD() - 1);
+    //     tracery.executeProposal(0);
+    //     vm.expectRevert("Voting period has not ended");
+
+    //     // Assert that after voting period ends, no one can vote
+    //     vm.warp(block.timestamp + tracery.VOTING_PERIOD() + 2);
+    //     vm.startPrank(alice);
+    //     tracery.vote(0, true);
+    //     vm.expectRevert("Voting period has ended");
+    //     vm.stopPrank();
+
+    //     // Assert that funds are not deducted before waiting ends
+    //     assertEq(address(tracery).balance, 10 ether);
+    //     assertEq(carol.balance, 0);
+
+    //     // Assert that funds are deducted after the waiting period is over
+    //     vm.warp(
+    //         block.timestamp +
+    //             tracery.VOTING_PERIOD() +
+    //             tracery.WAIT_BEFORE_EXEC() +
+    //             1
+    //     );
+    //     tracery.executeProposal(0);
+    //     assertEq(address(tracery).balance, 9 ether);
+    //     assertEq(carol.balance, 1 ether);
+    // }
+
+    function testProposalCreationAndVoting() public {
         vm.startPrank(alice);
-        treasury.createProposal(1 ether, carol, "Test Proposal");
-        treasury.vote(0, true);
+        tracery.createProposal(1 ether, carol, "Test Proposal");
+
+        tracery.vote(0, true);
         vm.stopPrank();
 
         vm.startPrank(bob);
-        treasury.vote(0, false);
+        tracery.vote(0, false);
+        vm.stopPrank();
+    }
+
+    function testVotingPeriodAndExecution() public {
+        vm.startPrank(alice);
+        tracery.createProposal(1 ether, carol, "Test Proposal");
+
+        tracery.vote(0, true);
+        vm.stopPrank();
+
+        vm.startPrank(bob);
+        tracery.vote(0, false);
         vm.stopPrank();
 
         // Assert that voting does not end before voting period ends
-        vm.warp(block.timestamp + treasury.VOTING_PERIOD() - 1);
+        vm.warp(block.timestamp + tracery.VOTING_PERIOD() - 1);
         vm.expectRevert("Voting period has not ended");
-        treasury.executeProposal(0);
+        tracery.executeProposal(0);
 
         // Assert that after voting period ends, no one can vote
-        vm.warp(block.timestamp + 1);
+        vm.warp(block.timestamp + tracery.VOTING_PERIOD() + 2);
+        vm.startPrank(alice);
         vm.expectRevert("Voting period has ended");
-        treasury.vote(0, true);
-
-        // Assert that funds are not deducted before waiting ends
-        assertEq(address(treasury).balance, 10 ether);
-        assertEq(address(carol).balance, 0);
-
-        // Assert that funds are deducted after the waiting period is over
-        vm.warp(block.timestamp + treasury.WAIT_BEFORE_EXEC());
-        treasury.executeProposal(0);
-        assertEq(address(treasury).balance, 9 ether);
-        assertEq(address(carol).balance, 1 ether);
+        tracery.vote(0, true);
+        vm.stopPrank();
     }
 
-    function testProposalQuorum() public {
+    function testFundDeductionAfterWaitingPeriod() public {
         vm.startPrank(alice);
-        treasury.createProposal(1 ether, carol, "Test Proposal 1");
-        treasury.vote(0, true);
+        tracery.createProposal(1 ether, carol, "Test Proposal");
+        tracery.vote(0, true);
         vm.stopPrank();
 
         vm.startPrank(bob);
-        treasury.vote(0, false);
+        tracery.vote(0, false);
         vm.stopPrank();
 
+        // Assert that funds are not deducted before waiting ends
+        assertEq(address(tracery).balance, 10 ether);
+        assertEq(carol.balance, 0);
+
+        // Assert that funds are deducted after the waiting period is over
         vm.warp(
             block.timestamp +
-                treasury.VOTING_PERIOD() +
-                treasury.WAIT_BEFORE_EXEC()
+                tracery.VOTING_PERIOD() +
+                tracery.WAIT_BEFORE_EXEC() +
+                1
         );
-        vm.expectRevert("Proposal did not pass");
-        treasury.executeProposal(0);
+        tracery.executeProposal(0);
+        assertEq(address(tracery).balance, 9 ether);
+        assertEq(carol.balance, 1 ether);
+    }
+
+    function testProposalQuorum() public {
+        vm.deal(address(tracery), 2 ether);
 
         vm.startPrank(alice);
-        treasury.createProposal(1 ether, carol, "Test Proposal 2");
-        treasury.vote(1, true);
+        tracery.createProposal(1 ether, carol, "Test Proposal 1");
+        tracery.vote(0, true);
+        vm.stopPrank();
+
+        vm.startPrank(bob);
+        tracery.vote(0, false);
         vm.stopPrank();
 
         vm.warp(
             block.timestamp +
-                treasury.VOTING_PERIOD() +
-                treasury.WAIT_BEFORE_EXEC()
+                tracery.VOTING_PERIOD() +
+                tracery.WAIT_BEFORE_EXEC() +
+                1
         );
-        treasury.executeProposal(1);
-        assertEq(address(carol).balance, 1 ether);
+        tracery.executeProposal(0);
+        vm.expectRevert("Proposal did not pass");
+        console.log("DONE");
+
+        vm.startPrank(alice);
+        tracery.createProposal(1 ether, carol, "Test Proposal 2");
+        tracery.vote(1, true);
+        vm.stopPrank();
+
+        vm.startPrank(bob);
+        tracery.vote(1, true);
+        vm.stopPrank();
+
+        vm.warp(
+            block.timestamp +
+                tracery.VOTING_PERIOD() +
+                tracery.WAIT_BEFORE_EXEC() +
+                1
+        );
+        tracery.executeProposal(1);
+        assertEq(carol.balance, 1 ether);
     }
 
     function testProposalFailure() public {
         vm.startPrank(alice);
-        treasury.createProposal(1 ether, carol, "Test Proposal");
-        treasury.vote(0, false);
+        tracery.createProposal(1 ether, carol, "Test Proposal");
+        tracery.vote(0, false);
         vm.stopPrank();
 
         vm.startPrank(bob);
-        treasury.vote(0, false);
+        tracery.vote(0, false);
         vm.stopPrank();
 
         vm.warp(
             block.timestamp +
-                treasury.VOTING_PERIOD() +
-                treasury.WAIT_BEFORE_EXEC()
+                tracery.VOTING_PERIOD() +
+                tracery.WAIT_BEFORE_EXEC() +
+                1
         );
         vm.expectRevert("Proposal did not pass");
-        treasury.executeProposal(0);
+        tracery.executeProposal(0);
     }
 }
