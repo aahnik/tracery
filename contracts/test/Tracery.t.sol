@@ -37,46 +37,6 @@ contract TraceryTest is Test {
         vm.deal(address(tracery), 10 ether);
     }
 
-    // function testProposalFlow() public {
-    //     vm.deal(address(tracery), 10 ether);
-
-    //     vm.startPrank(alice);
-    //     tracery.createProposal(1 ether, carol, "Test Proposal");
-    //     tracery.vote(0, true);
-    //     vm.stopPrank();
-
-    //     vm.startPrank(bob);
-    //     tracery.vote(0, false);
-    //     vm.stopPrank();
-
-    //     // Assert that voting does not end before voting period ends
-    //     vm.warp(block.timestamp + tracery.VOTING_PERIOD() - 1);
-    //     tracery.executeProposal(0);
-    //     vm.expectRevert("Voting period has not ended");
-
-    //     // Assert that after voting period ends, no one can vote
-    //     vm.warp(block.timestamp + tracery.VOTING_PERIOD() + 2);
-    //     vm.startPrank(alice);
-    //     tracery.vote(0, true);
-    //     vm.expectRevert("Voting period has ended");
-    //     vm.stopPrank();
-
-    //     // Assert that funds are not deducted before waiting ends
-    //     assertEq(address(tracery).balance, 10 ether);
-    //     assertEq(carol.balance, 0);
-
-    //     // Assert that funds are deducted after the waiting period is over
-    //     vm.warp(
-    //         block.timestamp +
-    //             tracery.VOTING_PERIOD() +
-    //             tracery.WAIT_BEFORE_EXEC() +
-    //             1
-    //     );
-    //     tracery.executeProposal(0);
-    //     assertEq(address(tracery).balance, 9 ether);
-    //     assertEq(carol.balance, 1 ether);
-    // }
-
     function testProposalCreationAndVoting() public {
         vm.startPrank(alice);
         tracery.createProposal(1 ether, carol, "Test Proposal");
@@ -85,8 +45,20 @@ contract TraceryTest is Test {
         vm.stopPrank();
 
         vm.startPrank(bob);
-        tracery.vote(0, false);
+        tracery.vote(0, true);
         vm.stopPrank();
+
+        vm.warp(
+            block.timestamp +
+                tracery.VOTING_PERIOD() +
+                tracery.WAIT_BEFORE_EXEC() +
+                1
+        );
+
+        vm.startPrank(sushant);
+        tracery.executeProposal(0);
+        vm.stopPrank();
+        assertEq(tracery.getBalance(), 9 ether);
     }
 
     function testVotingPeriodAndExecution() public {
