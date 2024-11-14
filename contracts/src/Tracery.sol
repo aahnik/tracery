@@ -48,6 +48,8 @@ contract Tracery is Ownable(msg.sender) {
         uint256 weight
     );
 
+    event CashInflow(address indexed source, uint256 timestamp, uint256 amount);
+
     modifier onlyMember() {
         require(members[msg.sender], "Not a Tracery member");
         _;
@@ -134,5 +136,15 @@ contract Tracery is Ownable(msg.sender) {
         emit MemberRemoved(_member);
     }
 
-    receive() external payable {}
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
+    receive() external payable {
+        emit CashInflow(
+            msg.sender, // source of the funds
+            block.timestamp, // current block timestamp
+            msg.value // amount received
+        );
+    }
 }
