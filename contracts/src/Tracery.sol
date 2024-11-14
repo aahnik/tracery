@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin-contracts-5.1.0/token/ERC20/IERC20.sol";
 import "@openzeppelin-contracts-5.1.0/access/Ownable.sol";
+import "forge-std/console.sol";
 
 contract Tracery is Ownable(msg.sender) {
     IERC20 public governanceToken;
@@ -89,8 +90,8 @@ contract Tracery is Ownable(msg.sender) {
             "Voting period has not ended"
         );
         require(
-            block.timestamp <= proposal.execDeadline,
-            "Execution deadline has passed"
+            block.timestamp > proposal.execDeadline,
+            "Waiting period has not ended"
         );
         require(!proposal.executed, "Proposal already executed");
         require(
