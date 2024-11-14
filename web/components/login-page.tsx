@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Github, BookOpen } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export function LoginPageComponent() {
   const { ready, authenticated, login } = usePrivy();
@@ -30,6 +31,7 @@ export function LoginPageComponent() {
           >
             Connect Wallet
           </Button>
+          <ConnectButton />
 
           <div className="text-center text-xl text-gray-500">
             Sign in with any wallet
