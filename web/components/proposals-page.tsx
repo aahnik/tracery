@@ -1,14 +1,15 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CreateProposalModal from "./proposals/create";
 import ProposalDetailsModal from "./proposals/details";
 import ProposalCard from "./proposals/card";
 import { Dialog, DialogTrigger } from "./ui/dialog";
 import { ContractContext } from "@/app/contractContext";
+import { useReadContract } from "thirdweb/react";
 
 // This would typically come from your API or database
-const proposals = [
+const defaultProposals = [
   {
     id: 1,
     title: "Increase community fund by 10%",
@@ -90,9 +91,23 @@ By increasing our community fund, we can foster more innovation, engage more mem
 ];
 
 export function ProposalsPage() {
+  const [proposals, setProposals] = useState([]);
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const contract = useContext(ContractContext);
+
+  const { data: fetchedProposals, isLoading } = useReadContract({
+    contract,
+    method: "getProposals",
+  });
+
+  useEffect(() => {
+    if (fetchedProposals && fetchedProposals.length > 0) {
+      setProposals(fetchedProposals);
+    } else {
+      setProposals(defaultProposals);
+    }
+  }, [fetchedProposals]);
 
   const openModal = (proposal: any) => {
     setSelectedProposal(proposal);

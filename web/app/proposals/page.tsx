@@ -1,3 +1,5 @@
+"use client";
+
 import { ProposalsPage } from "@/components/proposals-page";
 
 export default function Page() {

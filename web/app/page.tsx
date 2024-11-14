@@ -1,3 +1,5 @@
+"use client";
+
 import { LoginPageComponent } from "@/components/login-page";
 
 // import { useActiveAccount } from "thirdweb/react";
