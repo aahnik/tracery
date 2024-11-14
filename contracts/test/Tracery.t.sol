@@ -21,6 +21,8 @@ contract TraceryTest is Test {
 
     function setUp() public {
         governanceToken = new GovernanceToken();
+        governanceToken.transfer(alice, 10);
+        governanceToken.transfer(bob, 10);
         tracery = new Tracery(address(governanceToken));
         tracery.addMember(alice);
         tracery.addMember(bob);
@@ -92,9 +94,11 @@ contract TraceryTest is Test {
         vm.stopPrank();
 
         // Assert that voting does not end before voting period ends
+        vm.startPrank(alice);
         vm.warp(block.timestamp + tracery.VOTING_PERIOD() - 1);
         vm.expectRevert("Voting period has not ended");
         tracery.executeProposal(0);
+        vm.stopPrank();
 
         // Assert that after voting period ends, no one can vote
         vm.warp(block.timestamp + tracery.VOTING_PERIOD() + 2);
@@ -119,6 +123,7 @@ contract TraceryTest is Test {
         assertEq(carol.balance, 0);
 
         // Assert that funds are deducted after the waiting period is over
+        vm.startPrank(alice);
         vm.warp(
             block.timestamp +
                 tracery.VOTING_PERIOD() +
@@ -128,6 +133,7 @@ contract TraceryTest is Test {
         tracery.executeProposal(0);
         assertEq(address(tracery).balance, 9 ether);
         assertEq(carol.balance, 1 ether);
+        vm.stopPrank();
     }
 
     function testProposalQuorum() public {
@@ -142,6 +148,7 @@ contract TraceryTest is Test {
         tracery.vote(0, false);
         vm.stopPrank();
 
+        vm.startPrank(alice);
         vm.warp(
             block.timestamp +
                 tracery.VOTING_PERIOD() +
@@ -151,6 +158,7 @@ contract TraceryTest is Test {
         tracery.executeProposal(0);
         vm.expectRevert("Proposal did not pass");
         console.log("DONE");
+        vm.stopPrank();
 
         vm.startPrank(alice);
         tracery.createProposal(1 ether, carol, "Test Proposal 2");
@@ -161,6 +169,7 @@ contract TraceryTest is Test {
         tracery.vote(1, true);
         vm.stopPrank();
 
+        vm.startPrank(alice);
         vm.warp(
             block.timestamp +
                 tracery.VOTING_PERIOD() +
@@ -169,6 +178,7 @@ contract TraceryTest is Test {
         );
         tracery.executeProposal(1);
         assertEq(carol.balance, 1 ether);
+        vm.stopPrank();
     }
 
     function testProposalFailure() public {
@@ -187,7 +197,9 @@ contract TraceryTest is Test {
                 tracery.WAIT_BEFORE_EXEC() +
                 1
         );
-        vm.expectRevert("Proposal did not pass");
+        vm.startPrank(alice);
         tracery.executeProposal(0);
+        vm.expectRevert("Proposal did not pass");
+        vm.stopPrank();
     }
 }
