@@ -18,15 +18,22 @@ contract TraceryTest is Test {
     address public alice = address(0x1);
     address public bob = address(0x2);
     address public carol = address(0x3);
+    address public aahnik = address(0x4);
+    address public sushant = address(0x5);
+    address public arjun = address(0x6);
 
     function setUp() public {
         governanceToken = new GovernanceToken();
         governanceToken.transfer(alice, 10);
         governanceToken.transfer(bob, 10);
+        governanceToken.transfer(aahnik, 10);
         tracery = new Tracery(address(governanceToken));
         tracery.addMember(alice);
         tracery.addMember(bob);
-        governanceToken.transfer(bob, 500000);
+        tracery.addMember(aahnik);
+        tracery.addMember(sushant);
+        tracery.addMember(arjun);
+
         vm.deal(address(tracery), 10 ether);
     }
 
@@ -118,6 +125,10 @@ contract TraceryTest is Test {
         tracery.vote(0, false);
         vm.stopPrank();
 
+        vm.startPrank(aahnik);
+        tracery.vote(0, true);
+        vm.stopPrank();
+
         // Assert that funds are not deducted before waiting ends
         assertEq(address(tracery).balance, 10 ether);
         assertEq(carol.balance, 0);
@@ -155,8 +166,8 @@ contract TraceryTest is Test {
                 tracery.WAIT_BEFORE_EXEC() +
                 1
         );
-        tracery.executeProposal(0);
         vm.expectRevert("Proposal did not pass");
+        tracery.executeProposal(0);
         console.log("DONE");
         vm.stopPrank();
 
@@ -198,8 +209,8 @@ contract TraceryTest is Test {
                 1
         );
         vm.startPrank(alice);
-        tracery.executeProposal(0);
         vm.expectRevert("Proposal did not pass");
+        tracery.executeProposal(0);
         vm.stopPrank();
     }
 }
