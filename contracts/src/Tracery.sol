@@ -40,6 +40,17 @@ contract Tracery is Ownable(msg.sender) {
     );
     event NewMember(address member);
     event MemberRemoved(address member);
+    event VoteCast(
+        address indexed voter,
+        uint256 indexed proposalId,
+        bool vote,
+        uint256 weight
+    );
+
+    modifier onlyMember() {
+        require(members[msg.sender], "Not a Tracery member");
+        _;
+    }
 
     constructor(address _governanceToken) {
         governanceToken = IERC20(_governanceToken);
@@ -49,7 +60,7 @@ contract Tracery is Ownable(msg.sender) {
         uint256 _amount,
         address _destination,
         string memory _title
-    ) external {
+    ) external onlyMember {
         require(members[msg.sender], "Not a DAO member");
         uint256 proposalId = proposals.length;
         Proposal storage newProposal = proposals.push();
@@ -64,7 +75,7 @@ contract Tracery is Ownable(msg.sender) {
         emit NewProposal(proposalId, msg.sender, _amount, _destination, _title);
     }
 
-    function vote(uint256 _proposalId, bool _vote) external {
+    function vote(uint256 _proposalId, bool _vote) external onlyMember {
         require(members[msg.sender], "Not a DAO member");
         Proposal storage proposal = proposals[_proposalId];
         require(
@@ -81,9 +92,10 @@ contract Tracery is Ownable(msg.sender) {
             proposal.votes[msg.sender] = -1;
             proposal.negativeVoteCount += voterBalance;
         }
+        emit VoteCast(msg.sender, _proposalId, _vote, voterBalance);
     }
 
-    function executeProposal(uint256 _proposalId) external {
+    function executeProposal(uint256 _proposalId) external onlyMember {
         Proposal storage proposal = proposals[_proposalId];
         require(
             block.timestamp > proposal.votingDeadline,
@@ -94,6 +106,8 @@ contract Tracery is Ownable(msg.sender) {
             "Waiting period has not ended"
         );
         require(!proposal.executed, "Proposal already executed");
+        console.log("positiveVoteCount: %d", proposal.positiveVoteCount);
+        console.log("negativeVoteCount: %d", proposal.negativeVoteCount);
         require(
             proposal.positiveVoteCount > proposal.negativeVoteCount,
             "Proposal did not pass"
