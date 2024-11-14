@@ -1,12 +1,13 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+// import { useContext, useEffect, useState } from "react";
 import CreateProposalModal from "./proposals/create";
 import ProposalDetailsModal from "./proposals/details";
 import ProposalCard from "./proposals/card";
 import { Dialog, DialogTrigger } from "./ui/dialog";
-import { ContractContext } from "@/app/contractContext";
-import { useReadContract } from "thirdweb/react";
+import { useState } from "react";
+// import { ContractContext } from "@/app/contractContext";
+// import { useReadContract } from "thirdweb/react";
 
 // This would typically come from your API or database
 const defaultProposals = [
@@ -91,23 +92,24 @@ By increasing our community fund, we can foster more innovation, engage more mem
 ];
 
 export function ProposalsPage() {
-  const [proposals, setProposals] = useState([]);
+  // const [proposals, setProposals] = useState([]);
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const contract = useContext(ContractContext);
+  // const contract = useContext(ContractContext);
 
-  const { data: fetchedProposals, isLoading } = useReadContract({
-    contract,
-    method: "getProposals",
-  });
+  // const { data: fetchedProposals, isLoading } = useReadContract({
+  //   contract,
+  //   method: "getProposals",
+  //   params: [],
+  // });
 
-  useEffect(() => {
-    if (fetchedProposals && fetchedProposals.length > 0) {
-      setProposals(fetchedProposals);
-    } else {
-      setProposals(defaultProposals);
-    }
-  }, [fetchedProposals]);
+  // useEffect(() => {
+  //   if (fetchedProposals && fetchedProposals.length > 0) {
+  //     setProposals(fetchedProposals);
+  //   } else {
+  //     setProposals(defaultProposals);
+  //   }
+  // }, [fetchedProposals]);
 
   const openModal = (proposal: any) => {
     setSelectedProposal(proposal);
@@ -118,7 +120,7 @@ export function ProposalsPage() {
       <h1 className="text-4xl font-bold mb-8">Tracery Spend Proposals</h1>
       <CreateProposalModal />
       <div>
-        {proposals.map((proposal) => (
+        {defaultProposals.map((proposal) => (
           <Dialog
             key={proposal.id}
             open={isModalOpen && selectedProposal?.id === proposal.id}

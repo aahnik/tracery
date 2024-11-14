@@ -17,7 +17,8 @@ export const ContractProvider = ({ children }) => {
     const fetchContract = async () => {
       const contract = getContract({
         client,
-        chain: process.env.RPC === "local" ? hardhat : sepolia,
+        // chain: process.env.RPC === "local" ? hardhat : sepolia,
+        chain: hardhat,
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS, // Your contract address
       });
       setContract(contract);
