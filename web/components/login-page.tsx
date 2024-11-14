@@ -2,17 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Github, BookOpen } from "lucide-react";
-import { usePrivy } from "@privy-io/react-auth";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { client } from "../app/client";
+import { ConnectButton } from "thirdweb/react";
 
 export function LoginPageComponent() {
-  const { ready, authenticated, login } = usePrivy();
-  const disableLogin = !ready || (ready && authenticated);
-  const myLogin = () => {
-    console.log("hit login");
-    login();
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
       <main className="flex-grow flex flex-col items-center justify-center p-4">
@@ -23,15 +16,25 @@ export function LoginPageComponent() {
               Decentralized Treasury Management
             </p>
           </div>
-
+          {/*
           <Button
             className="w-full bg-blue-600 hover:bg-blue-700 text-white text-2xl"
             size="lg"
-            onClick={myLogin}
+            // onClick={}
           >
-            Connect Wallet
-          </Button>
-          <ConnectButton />
+
+
+          </Button> */}
+
+          <div>
+            <ConnectButton
+              client={client}
+              appMetadata={{
+                name: "Tracery",
+                url: "https://example.com",
+              }}
+            />
+          </div>
 
           <div className="text-center text-xl text-gray-500">
             Sign in with any wallet
