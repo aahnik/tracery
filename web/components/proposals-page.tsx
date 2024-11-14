@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import CreateProposalModal from "./proposals/create";
 import ProposalDetailsModal from "./proposals/details";
 import ProposalCard from "./proposals/card";
 import { Dialog, DialogTrigger } from "./ui/dialog";
+import { ContractContext } from "@/app/contractContext";
 
 // This would typically come from your API or database
 const proposals = [
@@ -91,6 +92,7 @@ By increasing our community fund, we can foster more innovation, engage more mem
 export function ProposalsPage() {
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const contract = useContext(ContractContext);
 
   const openModal = (proposal: any) => {
     setSelectedProposal(proposal);

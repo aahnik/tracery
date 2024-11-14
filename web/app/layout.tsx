@@ -3,6 +3,12 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { BottomBarComponent } from "@/components/components-bottom-bar";
 import { ThirdwebProvider } from "thirdweb/react";
+import { useSendTransaction } from "thirdweb/react";
+import { getContract, prepareContractCall } from "thirdweb";
+import { sepolia, hardhat } from "thirdweb/chains";
+import { client } from "./client";
+import { useContext } from "react";
+import { ContractContext } from "./contractContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,12 +31,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const contract = getContract({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+    chain: process.env.NEXT_PUBLIC_CHAIN === "local" ? hardhat : sepolia,
+    client,
+  });
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThirdwebProvider>{children}</ThirdwebProvider>
+        <ThirdwebProvider>
+          <ContractContext.Provider value={contract}>
+            {children}
+          </ContractContext.Provider>
+        </ThirdwebProvider>
 
         <BottomBarComponent />
       </body>
