@@ -36,7 +36,8 @@ contract Tracery is Ownable(msg.sender) {
     event ProposalExecuted(
         uint256 proposalId,
         uint256 amount,
-        address destination
+        address destination,
+        address executor
     );
     event NewMember(address member);
     event MemberRemoved(address member);
@@ -116,7 +117,8 @@ contract Tracery is Ownable(msg.sender) {
         emit ProposalExecuted(
             _proposalId,
             proposal.amount,
-            proposal.destination
+            proposal.destination,
+            msg.sender
         );
     }
 
