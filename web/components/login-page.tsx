@@ -1,11 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Github, BookOpen } from "lucide-react";
 import { client } from "../app/client";
-import { ConnectButton } from "thirdweb/react";
+import { useActiveWalletConnectionStatus } from "thirdweb/react";
+import { useConnect } from "thirdweb/react";
+import { createWallet, injectedProvider } from "thirdweb/wallets";
+import { Button } from "./ui/button";
 
 export function LoginPageComponent() {
+  const { connect, isConnecting, error } = useConnect();
+  const status = useActiveWalletConnectionStatus();
+  console.log("status", status);
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
       <main className="flex-grow flex flex-col items-center justify-center p-4">
@@ -16,25 +21,25 @@ export function LoginPageComponent() {
               Decentralized Treasury Management
             </p>
           </div>
-          {/*
+
           <Button
+            disabled={status === "connected" || status === "connecting"}
+            onClick={() =>
+              connect(async () => {
+                // create a wallet instance
+                const metamask = createWallet("io.metamask"); // autocomplete the wallet id
+                // trigger the connection
+                await metamask.connect({ client });
+                // return the wallet
+                return metamask;
+              })
+            }
             className="w-full bg-blue-600 hover:bg-blue-700 text-white text-2xl"
             size="lg"
-            // onClick={}
           >
+            Connect Wallet
+          </Button>
 
-
-          </Button> */}
-
-          <div>
-            <ConnectButton
-              client={client}
-              appMetadata={{
-                name: "Tracery",
-                url: "https://example.com",
-              }}
-            />
-          </div>
 
           <div className="text-center text-xl text-gray-500">
             Sign in with any wallet
